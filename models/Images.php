@@ -19,26 +19,17 @@ class Images extends DB{
 
     public function isValidProportions($width, $height)
     {
-        if($width > self::MAX_IMAGE_WIDTH || $height > self::MAX_IMAGE_HEIGHT){
-            return false;
-        }
-        return true;
+        return $width <= self::MAX_IMAGE_WIDTH && $height <= self::MAX_IMAGE_HEIGHT);
     }
 
     public function isValidExtension($extension)
     {
-        if(!in_array($extension, self::ALLOWED_EXSTENSIONS)){
-            return false;
-        }
-        return true;
+        return in_array($extension, self::ALLOWED_EXSTENSIONS);
     }
 
     public function isValidSize($size)
     {
-        if($size >= self::MAX_FILE_SIZE){
-            return false;
-        }
-       return  true;
+       return  $size <= self::MAX_FILE_SIZE;
     }
 
     public function generateRandomName($extension)
