@@ -1,5 +1,13 @@
 <?php
 
+require_once "models/Images.php";
+
+$image = new Images();
+
+
+
+
+
 $connection = mysqli_connect("localhost", "root", "", "php24");
 
 if(!($_FILES['profileImage'])){
@@ -8,43 +16,31 @@ if(!($_FILES['profileImage'])){
 
 //PROVERA VELICINE SLIKE
 $imageSize = $_FILES['profileImage']['size'];
-$maxFileSize = 2 * 1024 * 1024;
-if($imageSize > $maxFileSize){
-    die("Slika je prevelika!");
+if(!$image->isValidSize($imageSize)){
+    die("Slika je prevelika");
 }
 
 //SLIKA MOZE BITI MAXIMALNO 1920 SIRINE I 1024 VISINE
 list($width, $height) = getimagesize($_FILES["profileImage"]["tmp_name"]);
-if($width > 1920 || $height > 1024){
-    die("Maksimalna sirina slike moze biti 1920px a visina 1024px");
+if(!$image->isValidProportions($width, $height)){
+    die("Slika je presiroka ili previsoka!");
 }
 
 //PROVERA EKSTENZIJE
-$allowedExtensions = ["jpg", "jpeg", "png", "gif"];
 $imageType = pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION);
-if(!in_array($imageType, $allowedExtensions)) {
-    die("Format slike nije dobar, mora biti: ". implode(', ', $allowedExtensions));
+if(!$image->isValidExtension($imageType)) {
+    die("Format slike nije dobar!");
 }
 
 //GENERISANJE RANDOM IMENA SLIKE
-$imageName = time().".".$imageType;
+$randomName = $image->generateRandomName('jpg');
 
-$finalPath = "./uploads/$imageName";
+$finalPath = "./uploads/$randomName";
 $tmpFileName = $_FILES['profileImage']['tmp_name'];
 
 if(!is_dir("./uploads")){
     mkdir("./uploads", 0755, true);
 }
 
-$imageUploaded = move_uploaded_file($tmpFileName, $finalPath);
-
-if($imageUploaded){
-    $imageName = $connection->real_escape_string($imageName);
-    $connection->query("insert into images (image) values ('$imageName')");
-    die("Uspesno ste dodali sliku");
-}
-else{
-    die("Doslo je do greske");
-}
-
+$image->upload($_FILES['profileImage']['tmp_name'], $randomName, "./uploads");
 
