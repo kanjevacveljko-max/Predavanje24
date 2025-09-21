@@ -8,7 +8,7 @@ class Images extends DB{
     const MAX_IMAGE_WIDTH = 1920;
     const MAX_IMAGE_HEIGHT = 1024;
 
-    public function upload($image, $finalName, $destination)
+    public function upload(string $image, string $finalName, string $destination): void
     {
         $finalDestination = $destination."/".$finalName;
         move_uploaded_file($image, $finalDestination);
@@ -17,22 +17,22 @@ class Images extends DB{
         $this->connection->query("insert into images (image) values ('$finalName')");
     }
 
-    public function isValidProportions($width, $height)
+    public function isValidProportions(int $width, int $height): bool
     {
         return $width <= self::MAX_IMAGE_WIDTH && $height <= self::MAX_IMAGE_HEIGHT;
     }
 
-    public function isValidExtension($extension)
+    public function isValidExtension(string $extension): bool
     {
         return in_array($extension, self::ALLOWED_EXSTENSIONS);
     }
 
-    public function isValidSize($size)
+    public function isValidSize(int $size): bool
     {
        return  $size <= self::MAX_FILE_SIZE;
     }
 
-    public function generateRandomName($extension)
+    public function generateRandomName(string $extension): string
     {
         return uniqid().".".$extension;
     }
