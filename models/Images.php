@@ -19,7 +19,7 @@ class Images extends DB{
 
     public function isValidProportions($width, $height)
     {
-        return $width <= self::MAX_IMAGE_WIDTH && $height <= self::MAX_IMAGE_HEIGHT);
+        return $width <= self::MAX_IMAGE_WIDTH && $height <= self::MAX_IMAGE_HEIGHT;
     }
 
     public function isValidExtension($extension)
